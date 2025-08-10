@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Send Benzcoin</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #38bdf8;
+    }
+
+    label {
+      display: block;
+      margin: 0.5rem 0 0.25rem;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    input:focus {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid #38bdf8;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #38bdf8;
+      border: none;
+      border-radius: 8px;
+      color: #0f172a;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💸 Send Benzcoin</h1>
+    <form id="transferForm">
+      <label for="receiverId">Receiver ID</label>
+      <input type="text" id="receiverId" name="receiverId" placeholder="Enter receiver's UUID" required>
+
+      <label for="amount">Amount</label>
+      <input type="number" id="amount" name="amount" placeholder="Benzcoins to send" step="0.01" min="0.01" required>
+
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <!-- Supabase Client -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script src="transfer.js"></script>
+</body>
+</html>

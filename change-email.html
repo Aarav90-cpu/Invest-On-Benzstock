@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Change Email - BenzStock</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="change-email-container">
+    <h1>Change Your Email</h1>
+
+    <form id="change-email-form">
+      <input type="email" id="new-email" placeholder="New Email" required />
+      <button type="submit">Update Email</button>
+    </form>
+
+    <p><a href="login.html">Back to Login</a></p>
+  </div>
+
+  <!-- Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script>
+    const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.getElementById("change-email-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const newEmail = document.getElementById("new-email").value;
+
+      // Get the current user
+      const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+      if (userError || !user) {
+        alert("You must be logged in to change your email.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Update the email
+      const { data, error } = await supabaseClient.auth.updateUser({ email: newEmail });
+      if (error) {
+        alert("Error: " + error.message);
+      } else {
+        alert("Email updated! Please check your inbox to confirm the change.");
+      }
+    });
+  </script>
+</body>
+</html>

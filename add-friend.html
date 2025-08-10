@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Friend - BenzStock</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="add-friend-container">
+    <h1>Add a Friend</h1>
+    <form id="add-friend-form">
+      <input type="email" id="friend-email" placeholder="Friend's Email" required />
+      <button type="submit">Add Friend</button>
+    </form>
+    <p><a href="greet.html">Back to Home</a></p>
+  </div>
+
+  <!-- Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script>
+    const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR_PUBLIC_ANON_KEY";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.getElementById("add-friend-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const friendEmail = document.getElementById("friend-email").value.trim();
+
+      // Get logged in user
+      const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+      if (userError || !user) {
+        alert("You must be logged in to add friends.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Insert into friends table
+      const { error } = await supabaseClient.from("friends").insert({
+        user_id: user.id,
+        friend_email: friendEmail
+      });
+
+      if (error) {
+        alert("Error: " + error.message);
+      } else {
+        alert("Friend added successfully!");
+        document.getElementById("friend-email").value = "";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BenzStock Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h1>Sign in to BenzStock</h1>
+
+    <!-- Email login -->
+    <form id="email-login-form">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Sign In</button>
+    </form>
+
+    <hr>
+
+    <!-- Google OAuth -->
+    <button id="google-login">Sign in with Google</button>
+
+    <p>Don’t have an account? <a href="signup.html">Sign up here</a></p>
+  </div>
+
+  <!-- Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script>
+    // 🚨 Only public anon key here, never your service key!
+    const SUPABASE_URL = https://gsacnctvnpowrpeukkij.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
+
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Email+password login
+    document.getElementById("email-login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        alert("Error: " + error.message);
+      } else {
+        window.location.href = "dashboard.html";
+      }
+    });
+
+    // Google login
+    document.getElementById("google-login").addEventListener("click", async () => {
+      const { data, error } = await supabase.auth.signInWithOAuth({ provider: "google" });
+      if (error) alert(error.message);
+    });
+  </script>
+</body>
+</html>
