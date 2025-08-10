@@ -1,2 +1,2 @@
-# Invest-On-Bnezstock
+# Invest-On-Benzstock
 A video Game Website
