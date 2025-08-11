@@ -20,9 +20,6 @@
 
     <hr>
 
-    <!-- Google OAuth -->
-    <button id="google-signup">Sign up with Google</button>
-
     <p>Already have an account? <a href="login.html">Log in here</a></p>
   </div>
 
@@ -53,13 +50,7 @@
         alert("Sign-up successful! Please check your email to confirm your account.");
         window.location.href = "login.html";
       }
-    });
 
-    // Google sign up
-    document.getElementById("google-signup").addEventListener("click", async () => {
-      const { data, error } = await supabase.auth.signInWithOAuth({ provider: "google" });
-      if (error) alert(error.message);
-    });
   </script>
 </body>
 </html>

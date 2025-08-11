@@ -19,8 +19,6 @@
 
     <hr>
 
-    <!-- Google OAuth -->
-    <button id="google-login">Sign in with Google</button>
 
     <p>Don’t have an account? <a href="signup.html">Sign up here</a></p>
   </div>
@@ -46,13 +44,7 @@
       } else {
         window.location.href = "dashboard.html";
       }
-    });
-
-    // Google login
-    document.getElementById("google-login").addEventListener("click", async () => {
-      const { data, error } = await supabase.auth.signInWithOAuth({ provider: "google" });
-      if (error) alert(error.message);
-    });
+   
   </script>
 </body>
 </html>
