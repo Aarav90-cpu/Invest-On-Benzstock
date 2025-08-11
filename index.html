@@ -1,126 +1,145 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Invest‑On‑Benzstock — Welcome</title>
-  <meta name="description" content="Invest-On-Benzstock — Virtual trading game. Sign in & play." />
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Change Password - BenzStock</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
   <style>
-    :root{
+    :root {
       --bg-1:#060606;
       --bg-2:#0f1720;
       --accent1:#00d4ff;
       --accent2:#7b61ff;
       --muted:#9aa4b2;
       --glass: rgba(255,255,255,0.04);
-      --card: rgba(255,255,255,0.03);
-      --maxw:1100px;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:linear-gradient(180deg,var(--bg-1),var(--bg-2));color:#fff}
-
-    /* Page layout */
-    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px}
-    .shell{width:100%;max-width:var(--maxw);display:grid;grid-template-columns:1fr 420px;gap:36px;align-items:center}
-
-    /* HERO LEFT */
-    .hero-left{padding:28px}
-    .kicker{color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;font-size:12px}
-    h1{font-weight:800;font-size:clamp(28px,6vw,52px);margin:14px 0;line-height:1}
-    h1 .accent{background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-    p.lead{color:var(--muted);max-width:56ch;margin-top:12px;font-size:16px}
-
-    .cta-row{display:flex;gap:14px;margin-top:22px}
-    .btn{padding:12px 18px;border-radius:12px;border:none;cursor:pointer;font-weight:700}
-    .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#021018;box-shadow:0 10px 30px rgba(5,10,20,0.6)}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-
-    /* RIGHT CARD */
-    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:18px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 20px 60px rgba(2,6,12,0.6)}
-    .mock{height:520px;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;border-radius:14px;background:linear-gradient(180deg,#07121a,#021017);width:100%}
-    .mock .big{font-weight:700;color:var(--muted);font-size:18px}
-    .mock .value{font-size:36px;font-weight:800;margin-top:6px}
-    .mock .mini{color:var(--muted);font-size:13px;margin-top:6px}
-
-    /* ticker */
-    .ticker{width:100%;overflow:hidden;border-top:1px solid rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.02);margin-top:18px;padding:8px 6px}
-    .ticker .strip{display:inline-block;white-space:nowrap;animation:marquee 14s linear infinite}
-    .ticker span{display:inline-block;padding:0 22px;color:var(--muted);font-weight:600}
-    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-
-    footer{margin-top:26px;color:var(--muted);font-size:13px}
-
-    /* Responsiveness */
-    @media (max-width:980px){
-      .shell{grid-template-columns:1fr;}
-      .mock{height:360px}
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #fff;
     }
-
-    /* Subtle decorative floaters */
-    .floaters{position:fixed;right:-120px;top:60px;opacity:0.08;pointer-events:none}
-    .floaters svg{width:420px}
+    .container {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 2rem;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(2,6,12,0.6);
+    }
+    h1 {
+      text-align: center;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+    .input-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.8rem 2.5rem 0.8rem 0.8rem;
+      border: none;
+      border-radius: 12px;
+      outline: none;
+      font-size: 1rem;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      color: #021018;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(5,10,20,0.6);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 36px rgba(5,10,20,0.8);
+    }
+    p {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="shell">
-      <div class="hero-left">
-        <div class="kicker">Invest • Learn • Win</div>
-        <h1>Invest‑On‑Benzstock</h1>
-        <p class="lead">A realistic, fun, and safe virtual stock trading simulator. Start with BenzCash and BenzCoins, practice strategies, and climb the leaderboard. No real money — only street cred.</p>
-
-        <div class="cta-row">
-          <button class="btn btn-primary" onclick="location.href='signup.html'">Sign Up & Play</button>
-        </div>
-
-        <div style="margin-top:20px;max-width:600px">
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <div style="background:var(--glass);padding:8px 12px;border-radius:12px;font-weight:700;color:var(--muted)">Start: <span style="color:#fff;">10,000 BenzCash</span></div>
-            <div style="background:var(--glass);padding:8px 12px;border-radius:12px;font-weight:700;color:var(--muted)">BenzCoins: <span style="color:#fff;">100</span></div>
-          </div>
-        </div>
-
-        <footer>© 2025 Benzstock — Learn trading, lose the fear.</footer>
+  <div class="container">
+    <h1>Change Password</h1>
+    <form id="change-password-form">
+      <div class="input-group">
+        <input type="password" id="new-password" placeholder="New Password" required minlength="6"/>
+        <span class="toggle-password">👁</span>
       </div>
-
-      <aside>
-        <div class="card">
-          <div class="mock">
-            <div class="big">Live Preview</div>
-            <div class="value">MBG.DE · € 73.28</div>
-            <div class="mini">+1.8% • Updated live</div>
-          </div>
-
-          <div class="ticker"><div class="strip">
-            <span>BENZ: +1.8%</span>
-            <span>NIFTY: -0.3%</span>
-            <span>RIZZCORP: +0.5%</span>
-            <span>BTC: +2.1%</span>
-            <span>ETH: -1.2%</span>
-            <span>GOLD: +0.4%</span>
-            <span>OIL: -0.7%</span>
-            <span>BENZ: +1.8%</span> <!-- doubled for smooth loop -->
-          </div></div>
-        </div>
-      </aside>
-    </div>
+      <button type="submit">Update Password</button>
+    </form>
+    <p><a href="login.html">Back to Login</a></p>
   </div>
 
-  <!-- decorative SVG floaters -->
-  <div class="floaters" aria-hidden>
-    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#00d4ff"/><stop offset="1" stop-color="#7b61ff"/></linearGradient></defs><g fill="none" stroke="url(#g1)" stroke-width="2" opacity="0.18"><circle cx="50" cy="50" r="40"/><circle cx="180" cy="70" r="30"/><circle cx="320" cy="40" r="48"/><path d="M420 120c20-30 80-40 120-10"/></g></svg>
-  </div>
-
+  <!-- Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script>
-    // tiny perf-safe marquee tweak: duplicate strip content so it scrolls smoothly
-    (function(){
-      const s = document.querySelector('.ticker .strip');
-      if(s) s.innerHTML = s.innerHTML + s.innerHTML;
-    })();
+    const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Toggle password visibility
+    document.querySelector(".toggle-password").addEventListener("click", () => {
+      const passInput = document.getElementById("new-password");
+      passInput.type = passInput.type === "password" ? "text" : "password";
+    });
+
+    // Handle password change
+    document.getElementById("change-password-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const newPassword = document.getElementById("new-password").value;
+
+      const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+      if (userError || !user) {
+        alert("You must be logged in to change your password.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+      if (error) {
+        alert("Error: " + error.message);
+      } else {
+        alert("✅ Password updated successfully!");
+        window.location.href = "login.html";
+      }
+    });
   </script>
 </body>
 </html>
-

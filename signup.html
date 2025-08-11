@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BenzStock Sign Up</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="signup-container">
+  <div class="login-container">
     <h1>Create Your BenzStock Account</h1>
 
-    <!-- Email signup -->
-    <form id="email-signup-form">
-      <input type="email" id="signup-email" placeholder="Email" required />
-      <input type="password" id="signup-password" placeholder="Password" required />
+    <!-- Sign Up form -->
+    <form id="signup-form">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <input type="password" id="confirm-password" placeholder="Confirm Password" required>
       <button type="submit">Sign Up</button>
     </form>
 
     <hr>
 
-    <!-- Google signup -->
-    <button id="bruh">Sign up with Google</button>
+    <!-- Google OAuth -->
+    <button id="google-signup">Sign up with Google</button>
 
-    <p>Already have an account? <a href="login.html">Sign in here</a></p>
+    <p>Already have an account? <a href="login.html">Log in here</a></p>
   </div>
 
   <!-- Supabase -->
@@ -31,29 +32,34 @@
     const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Email signup
-    document.getElementById("email-signup-form").addEventListener("submit", async (e) => {
+    // Email+password sign up
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = document.getElementById("signup-email").value;
-      const password = document.getElementById("signup-password").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
 
-      const { data, error } = await supabaseClient.auth.signUp({ email, password });
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) {
         alert("Error: " + error.message);
       } else {
-        alert("Account created! Check your email to confirm.");
+        alert("Sign-up successful! Please check your email to confirm your account.");
         window.location.href = "login.html";
       }
     });
 
-    // Google signup (same as Google login)
-    document.getElementById("bruh").addEventListener("click", async () => {
-      const { data, error } = await supabaseClient.auth.signInWithOAuth({ provider: "google" });
+    // Google sign up
+    document.getElementById("google-signup").addEventListener("click", async () => {
+      const { data, error } = await supabase.auth.signInWithOAuth({ provider: "google" });
       if (error) alert(error.message);
     });
   </script>
 </body>
 </html>
-

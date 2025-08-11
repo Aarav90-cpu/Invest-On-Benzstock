@@ -4,21 +4,91 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Change Email - BenzStock</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(120deg, #00c6ff, #0072ff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .change-email-container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      width: 350px;
+      animation: fadeIn 0.6s ease;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    input {
+      outline: none;
+      background: #fff;
+      color: #000;
+    }
+
+    button {
+      background: #00c6ff;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: #0072ff;
+      transform: translateY(-2px);
+    }
+
+    p {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    a {
+      color: #00c6ff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
   <div class="change-email-container">
     <h1>Change Your Email</h1>
-
     <form id="change-email-form">
       <input type="email" id="new-email" placeholder="New Email" required />
       <button type="submit">Update Email</button>
     </form>
-
     <p><a href="login.html">Back to Login</a></p>
   </div>
 
-  <!-- Supabase -->
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script>
     const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
@@ -28,9 +98,8 @@
 
     document.getElementById("change-email-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const newEmail = document.getElementById("new-email").value;
+      const newEmail = document.getElementById("new-email").value.trim();
 
-      // Get the current user
       const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
       if (userError || !user) {
         alert("You must be logged in to change your email.");
@@ -38,12 +107,12 @@
         return;
       }
 
-      // Update the email
-      const { data, error } = await supabaseClient.auth.updateUser({ email: newEmail });
+      const { error } = await supabaseClient.auth.updateUser({ email: newEmail });
       if (error) {
         alert("Error: " + error.message);
       } else {
-        alert("Email updated! Please check your inbox to confirm the change.");
+        alert("Email updated! Please check your inbox to confirm.");
+        document.getElementById("new-email").value = "";
       }
     });
   </script>
