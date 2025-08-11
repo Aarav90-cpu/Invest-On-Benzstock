@@ -20,7 +20,7 @@
     <hr>
 
     <!-- Google signup -->
-    <button id="google-signup">Sign up with Google</button>
+    <button id="bruh">Sign up with Google</button>
 
     <p>Already have an account? <a href="login.html">Sign in here</a></p>
   </div>
@@ -49,10 +49,11 @@
     });
 
     // Google signup (same as Google login)
-    document.getElementById("google-signup").addEventListener("click", async () => {
+    document.getElementById("bruh").addEventListener("click", async () => {
       const { data, error } = await supabaseClient.auth.signInWithOAuth({ provider: "google" });
       if (error) alert(error.message);
     });
   </script>
 </body>
 </html>
+
