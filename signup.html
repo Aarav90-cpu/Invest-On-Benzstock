@@ -1,26 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BenzStock Sign Up</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .signup-container {
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0px 0px 20px rgba(0,0,0,0.6);
+      width: 300px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 1.5rem;
+      color: #00ff88;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 6px;
+      background: #2a2a2a;
+      color: white;
+    }
+
+    input::placeholder {
+      color: #aaa;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 1rem;
+      background-color: #00ff88;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      color: #121212;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00cc6a;
+    }
+
+    a {
+      color: #00ff88;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <div class="login-container">
-    <h1>Create Your BenzStock Account</h1>
+  <div class="signup-container">
+    <h1>Create Account</h1>
 
-    <!-- Sign Up form -->
     <form id="signup-form">
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="password" id="confirm-password" placeholder="Confirm Password" required />
       <button type="submit">Sign Up</button>
     </form>
 
-    <hr>
-
-    <p>Already have an account? <a href="login.html">Log in here</a></p>
+    <p style="margin-top:1rem;">Already have an account? <a href="login.html">Log in</a></p>
   </div>
 
   <!-- Supabase -->
@@ -28,11 +91,12 @@
   <script>
     const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Email+password sign up
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     document.getElementById("signup-form").addEventListener("submit", async (e) => {
       e.preventDefault();
+
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirm-password").value;
@@ -42,15 +106,23 @@
         return;
       }
 
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password
+      });
+
       if (error) {
-        alert("Error: " + error.message);
+        alert("Signup failed: " + error.message);
       } else {
-        alert("Sign-up successful! Please check your email to confirm your account.");
+        alert("Signup successful! Please check your email to confirm your account.");
         window.location.href = "login.html";
       }
-
+    });
   </script>
 </body>
 </html>
 
+
+
+
+ChatGPT can make mistakes. Check important info. See Cookie Preferences
