@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BenzStock - Home</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ccc;
+  }
+  .logo {
+    font-style: italic;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  .portfolio {
+    background: #fff;
+    margin: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    font-style: italic;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  .stock-card {
+    background: #fff;
+    margin: 20px;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .stock-info {
+    flex: 1;
+  }
+  .stock-name {
+    font-style: italic;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .stock-desc {
+    font-style: italic;
+    color: #666;
+  }
+  .stock-change {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+  }
+  .up {
+    color: green;
+  }
+  .down {
+    color: red;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="profile">
+    <img src="" alt="Profile" />
+    <span>Hey There,</span>
+  </div>
+  <div class="logo">invest on benzstock</div>
+</header>
+
+<div class="portfolio">
+  <span>Portfolio</span>
+  <span id="portfolioValue">₹12,899.00</span>
+</div>
+
+<div id="stocks"></div>
+
+<script>
+  const stockData = [
+    { name: "Rizzcorp", desc: "blah blah blah blah blah blah blah blah", change: 4.8 },
+    { name: "Bruh stocks", desc: "blah blah blah blah blah blah blah blah", change: 7.6 },
+    { name: "Benzstocks", desc: "blah blah blah blah blah blah blah blah", change: -8.9 }
+  ];
+
+  const stocksContainer = document.getElementById("stocks");
+
+  stockData.forEach(stock => {
+    const card = document.createElement("div");
+    card.className = "stock-card";
+
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "stock-info";
+
+    const name = document.createElement("div");
+    name.className = "stock-name";
+    name.textContent = stock.name;
+
+    const desc = document.createElement("div");
+    desc.className = "stock-desc";
+    desc.textContent = stock.desc;
+
+    infoDiv.appendChild(name);
+    infoDiv.appendChild(desc);
+
+    const changeDiv = document.createElement("div");
+    changeDiv.className = "stock-change " + (stock.change >= 0 ? "up" : "down");
+    changeDiv.innerHTML = (stock.change >= 0 ? "⬆" : "⬇") + Math.abs(stock.change);
+
+    card.appendChild(infoDiv);
+    card.appendChild(changeDiv);
+
+    stocksContainer.appendChild(card);
+  });
+</script>
+
+</body>
+</html>
