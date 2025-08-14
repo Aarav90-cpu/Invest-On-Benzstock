@@ -1,168 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Send Benzcoin</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transfer</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: #fff;
+      font-family: Arial, sans-serif;
+      background-color: #0d1117;
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
       margin: 0;
     }
-
-    .container {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(12px);
-      border-radius: 16px;
+    .transfer-box {
+      background: #161b22;
       padding: 2rem;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-      animation: fadeIn 0.5s ease-in-out;
+      border-radius: 8px;
+      width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-
     h1 {
       text-align: center;
-      margin-bottom: 1.5rem;
-      color: #38bdf8;
+      color: #58a6ff;
     }
-
-    label {
-      display: block;
-      margin: 0.5rem 0 0.25rem;
-      font-size: 0.9rem;
-      color: #cbd5e1;
-    }
-
-    input {
+    select, input {
       width: 100%;
-      padding: 0.75rem;
-      border: none;
-      border-radius: 8px;
-      outline: none;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      font-size: 1rem;
-      margin-bottom: 1rem;
+      padding: 0.6rem;
+      margin: 0.5rem 0;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      color: white;
     }
-
-    input:focus {
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid #38bdf8;
-    }
-
     button {
       width: 100%;
-      padding: 0.75rem;
-      background: #38bdf8;
+      padding: 0.6rem;
+      background: #238636;
       border: none;
-      border-radius: 8px;
-      color: #0f172a;
-      font-weight: bold;
+      border-radius: 4px;
+      color: white;
       font-size: 1rem;
       cursor: pointer;
-      transition: background 0.2s ease-in-out;
     }
-
     button:hover {
-      background: #0ea5e9;
+      background: #2ea043;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .error {
+      color: red;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .success {
+      color: #2ea043;
+      font-size: 0.85rem;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>💸 Send Benzcoin</h1>
-    <form id="transferForm">
-      <label for="receiverId">Receiver ID</label>
-      <input type="text" id="receiverId" name="receiverId" placeholder="Enter receiver's UUID" required>
-
-      <label for="amount">Amount</label>
-      <input type="number" id="amount" name="amount" placeholder="Benzcoins to send" step="0.01" min="0.01" required>
-
-      <button type="submit">Send</button>
-    </form>
+  <div class="transfer-box">
+    <h1>Transfer</h1>
+    <input type="text" id="recipient" placeholder="Recipient Username" />
+    <select id="currency">
+      <option value="coins">BenzCoins</option>
+      <option value="money">Money</option>
+    </select>
+    <input type="number" id="amount" placeholder="Amount" />
+    <button id="transfer-btn">Send</button>
+    <div class="error" id="error-msg"></div>
+    <div class="success" id="success-msg"></div>
   </div>
 
-  <!-- Supabase Client -->
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script>
-    // ====== Supabase Client Setup ======
     const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ====== Transfer Logic ======
-    async function transferBenzcoin(senderId, receiverId, amount) {
-      // Step 1: Get sender balance
-      let { data: sender, error: senderError } = await supabaseClient
-        .from('users')
-        .select('balance')
-        .eq('id', senderId)
+    const transferBtn = document.getElementById("transfer-btn");
+    const errorMsg = document.getElementById("error-msg");
+    const successMsg = document.getElementById("success-msg");
+
+    async function getCurrentUser() {
+      const { data: { user }, error } = await supabaseClient.auth.getUser();
+      if (error || !user) return null;
+      const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
         .single();
-
-      if (senderError) throw new Error("Error fetching sender balance.");
-      if (sender.balance < amount) throw new Error("Not enough Benzcoin, bro.");
-
-      // Step 2: Start transaction (update balances)
-      const { error: senderUpdateError } = await supabaseClient
-        .from('users')
-        .update({ balance: sender.balance - amount })
-        .eq('id', senderId);
-
-      const { data: receiver, error: receiverError } = await supabaseClient
-        .from('users')
-        .select('balance')
-        .eq('id', receiverId)
-        .single();
-
-      if (receiverError) throw new Error("Receiver not found.");
-
-      const { error: receiverUpdateError } = await supabaseClient
-        .from('users')
-        .update({ balance: receiver.balance + amount })
-        .eq('id', receiverId);
-
-      if (senderUpdateError || receiverUpdateError) {
-        throw new Error("Transfer failed, bro.");
-      }
-
-      alert(`💸 Sent ${amount} Benzcoin to ${receiverId}!`);
+      return profile;
     }
 
-    // ====== Form Handling ======
-    document.addEventListener('DOMContentLoaded', async () => {
-      const form = document.getElementById('transferForm');
+    transferBtn.addEventListener("click", async () => {
+      errorMsg.textContent = "";
+      successMsg.textContent = "";
 
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      const recipientUsername = document.getElementById("recipient").value.trim();
+      const currency = document.getElementById("currency").value;
+      const amount = parseFloat(document.getElementById("amount").value);
 
-        const { data: { user }, error } = await supabaseClient.auth.getUser();
-        if (error || !user) {
-          alert("You need to be signed in to send Benzcoin.");
-          return;
-        }
+      if (!recipientUsername || isNaN(amount) || amount <= 0) {
+        errorMsg.textContent = "Please enter valid details.";
+        return;
+      }
 
-        const senderId = user.id;
-        const receiverId = document.getElementById('receiverId').value.trim();
-        const amount = parseFloat(document.getElementById('amount').value);
+      const sender = await getCurrentUser();
+      if (!sender) {
+        errorMsg.textContent = "You must be logged in.";
+        return;
+      }
 
-        try {
-          await transferBenzcoin(senderId, receiverId, amount);
-        } catch (err) {
-          alert(err.message);
-        }
-      });
+      if (sender.username === recipientUsername) {
+        errorMsg.textContent = "You cannot send to yourself.";
+        return;
+      }
+
+      if (sender[currency] < amount) {
+        errorMsg.textContent = `You don't have enough ${currency}.`;
+        return;
+      }
+
+      const { data: recipient } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("username", recipientUsername)
+        .single();
+
+      if (!recipient) {
+        errorMsg.textContent = "Recipient not found.";
+        return;
+      }
+
+      // Update sender
+      const { error: senderError } = await supabaseClient
+        .from("profiles")
+        .update({ [currency]: sender[currency] - amount })
+        .eq("id", sender.id);
+
+      if (senderError) {
+        errorMsg.textContent = senderError.message;
+        return;
+      }
+
+      // Update recipient
+      const { error: recipientError } = await supabaseClient
+        .from("profiles")
+        .update({ [currency]: recipient[currency] + amount })
+        .eq("id", recipient.id);
+
+      if (recipientError) {
+        errorMsg.textContent = recipientError.message;
+        return;
+      }
+
+      successMsg.textContent = `Successfully sent ${amount} ${currency} to ${recipientUsername}!`;
     });
   </script>
 </body>
