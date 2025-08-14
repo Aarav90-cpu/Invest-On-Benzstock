@@ -1,120 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Change Email - BenzStock</title>
   <style>
     body {
+      background-color: #121212;
+      color: #fff;
       font-family: Arial, sans-serif;
-      background: linear-gradient(120deg, #00c6ff, #0072ff);
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: white;
     }
-
-    .change-email-container {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      width: 350px;
-      animation: fadeIn 0.6s ease;
-    }
-
-    h1 {
-      margin-bottom: 1rem;
+    header {
+      background-color: #1e1e1e;
+      padding: 15px;
       text-align: center;
+      color: #00ff88;
+      font-size: 24px;
+      border-bottom: 2px solid #333;
     }
-
-    input, button {
+    main {
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
       border: none;
-      border-radius: 6px;
-      font-size: 1rem;
+      border-radius: 5px;
+      background: #1f1f1f;
+      color: #fff;
+      font-size: 16px;
+      margin-top: 5px;
     }
-
-    input {
-      outline: none;
-      background: #fff;
-      color: #000;
-    }
-
     button {
-      background: #00c6ff;
-      color: white;
+      margin-top: 20px;
+      width: 100%;
+      background: #00ff88;
+      color: #121212;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 5px;
       cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s ease, transform 0.2s ease;
     }
-
     button:hover {
-      background: #0072ff;
-      transform: translateY(-2px);
+      background: #00cc6a;
     }
-
-    p {
+    .message {
+      margin-top: 15px;
       text-align: center;
-      margin-top: 1rem;
-    }
-
-    a {
-      color: #00c6ff;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div class="change-email-container">
-    <h1>Change Your Email</h1>
-    <form id="change-email-form">
-      <input type="email" id="new-email" placeholder="New Email" required />
-      <button type="submit">Update Email</button>
-    </form>
-    <p><a href="login.html">Back to Login</a></p>
-  </div>
+  <header>Change Your Email</header>
+  <main>
+    <label for="newEmail">New Email Address:</label>
+    <input type="email" id="newEmail" placeholder="Enter new email" required>
+
+    <button id="changeEmailBtn">Update Email</button>
+    <div class="message" id="message"></div>
+  </main>
 
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script>
     const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
-
+    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY"; // Replace with your key
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.getElementById("change-email-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const newEmail = document.getElementById("new-email").value.trim();
+    let currentUser;
 
-      const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-      if (userError || !user) {
-        alert("You must be logged in to change your email.");
+    async function checkAuth() {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) {
         window.location.href = "login.html";
         return;
       }
+      currentUser = user;
+    }
 
-      const { error } = await supabaseClient.auth.updateUser({ email: newEmail });
-      if (error) {
-        alert("Error: " + error.message);
-      } else {
-        alert("Email updated! Please check your inbox to confirm.");
-        document.getElementById("new-email").value = "";
+    async function changeEmail() {
+      const newEmail = document.getElementById("newEmail").value.trim();
+      const messageDiv = document.getElementById("message");
+
+      if (!newEmail) {
+        messageDiv.textContent = "Please enter a valid email.";
+        return;
       }
-    });
+
+      // 1. Update in Supabase Auth
+      const { data, error } = await supabaseClient.auth.updateUser({ email: newEmail });
+
+      if (error) {
+        messageDiv.textContent = "Error: " + error.message;
+        return;
+      }
+
+      // 2. Update in profiles table
+      const { error: profileError } = await supabaseClient
+        .from("profiles")
+        .update({ email: newEmail })
+        .eq("id", currentUser.id);
+
+      if (profileError) {
+        messageDiv.textContent = "Auth updated, but failed to update profile email.";
+        console.error(profileError);
+        return;
+      }
+
+      messageDiv.textContent = "Email updated successfully! Please check your inbox for confirmation.";
+    }
+
+    document.getElementById("changeEmailBtn").addEventListener("click", changeEmail);
+
+    checkAuth();
   </script>
 </body>
 </html>
