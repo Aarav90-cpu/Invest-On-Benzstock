@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Portfolio & BenzStocks</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #1e1e1e;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #333;
+    }
+    header h1 {
+      color: #00ff88;
+      margin: 0;
+    }
+    .back-btn {
+      background: #00ff88;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #121212;
+      font-weight: bold;
+    }
+    main {
+      padding: 20px;
+    }
+    .highlight {
+      color: #00ff88;
+      font-weight: bold;
+    }
+    .benzcoins-box {
+      background-color: #1e1e1e;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 10px;
+      display: inline-block;
+      font-size: 1.2em;
+      border: 1px solid #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #1e1e1e;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+    th {
+      color: #00ff88;
+    }
+    tr:hover {
+      background-color: #262626;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Portfolio</h1>
+    <button class="back-btn" onclick="window.location.href='index.html'">⬅ Back</button>
+  </header>
+
+  <main>
+    <h2>Welcome, <span id="username" class="highlight"></span>!</h2>
+
+    <!-- BenzsCoins Display -->
+    <div class="benzcoins-box">
+      💰 BenzsCoins: <span id="benzcoins" class="highlight">0</span>
+    </div>
+
+    <h3 style="margin-top: 30px;">My BenzStocks Overview</h3>
+    <table id="portfolio-table">
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Quantity</th>
+          <th>Avg. Buy Price</th>
+          <th>Current Price</th>
+          <th>P/L</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Populated dynamically -->
+      </tbody>
+    </table>
+  </main>
+
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script>
+    const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function checkAuth() {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      document.getElementById("username").textContent = user.email;
+      fetchBenzsCoins(user.id);
+    }
+
+    async function fetchBenzsCoins(userId) {
+      const { data, error } = await supabaseClient
+        .from("users")
+        .select("benzscoins")
+        .eq("id", userId)
+        .single();
+      if (error) {
+        console.error(error);
+        return;
+      }
+      document.getElementById("benzcoins").textContent = data.benzscoins ?? 0;
+    }
+
+    async function fetchPortfolio() {
+      const { data, error } = await supabaseClient.from("portfolio").select("*");
+      if (error) {
+        console.error(error);
+        return;
+      }
+      const tbody = document.querySelector("#portfolio-table tbody");
+      tbody.innerHTML = "";
+      data.forEach(stock => {
+        const pl = (stock.current_price - stock.avg_buy_price) * stock.quantity;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${stock.symbol}</td>
+          <td>${stock.quantity}</td>
+          <td>$${stock.avg_buy_price.toFixed(2)}</td>
+          <td>$${stock.current_price.toFixed(2)}</td>
+          <td style="color: ${pl >= 0 ? '#00ff88' : '#ff4444'};">
+            ${pl >= 0 ? '+' : ''}${pl.toFixed(2)}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    checkAuth();
+    fetchPortfolio();
+  </script>
+</body>
+</html>
