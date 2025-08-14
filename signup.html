@@ -3,122 +3,141 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BenzStock Sign Up</title>
+  <title>Sign Up</title>
   <style>
     body {
-      background-color: #121212;
-      color: white;
       font-family: Arial, sans-serif;
+      background-color: #0d1117;
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
     }
-
-    .signup-container {
-      background-color: #1e1e1e;
+    .signup-box {
+      background: #161b22;
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0px 0px 20px rgba(0,0,0,0.6);
-      width: 300px;
-      text-align: center;
+      border-radius: 8px;
+      width: 350px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-
     h1 {
-      margin-bottom: 1.5rem;
-      color: #00ff88;
+      text-align: center;
+      color: #58a6ff;
     }
-
     input {
       width: 100%;
-      padding: 10px;
+      padding: 0.6rem;
       margin: 0.5rem 0;
-      border: none;
-      border-radius: 6px;
-      background: #2a2a2a;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 4px;
       color: white;
     }
-
-    input::placeholder {
-      color: #aaa;
-    }
-
     button {
       width: 100%;
-      padding: 10px;
-      margin-top: 1rem;
-      background-color: #00ff88;
+      padding: 0.6rem;
+      background: #238636;
       border: none;
-      border-radius: 6px;
+      border-radius: 4px;
+      color: white;
       font-size: 1rem;
-      color: #121212;
-      font-weight: bold;
       cursor: pointer;
-      transition: 0.3s ease;
     }
-
     button:hover {
-      background-color: #00cc6a;
+      background: #2ea043;
     }
-
-    a {
-      color: #00ff88;
+    .error {
+      color: red;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .link {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .link a {
+      color: #58a6ff;
       text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="signup-container">
-    <h1>Create Account</h1>
-
-    <form id="signup-form">
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <input type="password" id="confirm-password" placeholder="Confirm Password" required />
-      <button type="submit">Sign Up</button>
-    </form>
-
-    <p style="margin-top:1rem;">Already have an account? <a href="login.html">Log in</a></p>
+  <div class="signup-box">
+    <h1>Sign Up</h1>
+    <input type="text" id="username" placeholder="Username (e.g. Arphd4)" />
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="signup-btn">Sign Up</button>
+    <div class="error" id="error-msg"></div>
+    <div class="link">
+      Already have an account? <a href="login.html">Log In</a>
+    </div>
   </div>
 
-  <!-- Supabase -->
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script>
     const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
-
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.getElementById("signup-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
+    const signupBtn = document.getElementById("signup-btn");
+    const errorMsg = document.getElementById("error-msg");
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirm-password").value;
+    signupBtn.addEventListener("click", async () => {
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-      if (password !== confirmPassword) {
-        alert("Passwords do not match!");
+      if (!username || !email || !password) {
+        errorMsg.textContent = "Please fill in all fields.";
         return;
       }
 
+      // Check if username is taken
+      const { data: existingUser } = await supabaseClient
+        .from("profiles")
+        .select("username")
+        .eq("username", username)
+        .single();
+
+      if (existingUser) {
+        errorMsg.textContent = "Username already taken.";
+        return;
+      }
+
+      // Sign up in Supabase Auth
       const { data, error } = await supabaseClient.auth.signUp({
         email,
         password
       });
 
       if (error) {
-        alert("Signup failed: " + error.message);
-      } else {
-        alert("Signup successful! Please check your email to confirm your account.");
-        window.location.href = "login.html";
+        errorMsg.textContent = error.message;
+        return;
       }
+
+      // Insert into profiles table
+      const { error: profileError } = await supabaseClient
+        .from("profiles")
+        .insert([
+          {
+            id: data.user.id,
+            username,
+            email,
+            coins: 0,
+            money: 0
+          }
+        ]);
+
+      if (profileError) {
+        errorMsg.textContent = profileError.message;
+        return;
+      }
+
+      window.location.href = "home.html";
     });
   </script>
 </body>
 </html>
-
