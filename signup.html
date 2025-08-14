@@ -39,114 +39,156 @@
       width: 100%;
       padding: 0.6rem;
       background: #238636;
-      border: none;
-      border-radius: 4px;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #2ea043;
-    }
-    .error {
-      color: red;
-      font-size: 0.85rem;
-      text-align: center;
-    }
-    .link {
-      text-align: center;
-      margin-top: 1rem;
-    }
-    .link a {
-      color: #58a6ff;
-      text-decoration: none;
-    }
-  </style>
+      border: none;<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sign Up</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<style>
+  body {
+    margin: 0;
+    background-color: #0d0d0d;
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .container {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    max-width: 400px;
+    width: 100%;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+  input {
+    width: 100%;
+    padding: 0.7rem;
+    border-radius: 8px;
+    border: none;
+    margin-top: 0.5rem;
+    background: #2a2a2a;
+    color: white;
+  }
+  input:focus {
+    outline: 2px solid #00c4ff;
+  }
+  button {
+    width: 100%;
+    padding: 0.8rem;
+    background: #00c4ff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover {
+    background: #009ac4;
+  }
+  .link {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+  .link a {
+    color: #00c4ff;
+    text-decoration: none;
+  }
+</style>
 </head>
 <body>
-  <div class="signup-box">
-    <h1>Sign Up</h1>
-    <input type="text" id="username" placeholder="Username (e.g. Arphd4)" />
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
-    <button id="signup-btn">Sign Up</button>
-    <div class="error" id="error-msg"></div>
-    <div class="link">
-      Already have an account? <a href="login.html">Log In</a>
-    </div>
+
+<div class="container">
+  <h1>Sign Up</h1>
+  <form id="signup-form">
+    <label>Username</label>
+    <input type="text" id="username" placeholder="Enter username" required />
+
+    <label>Email</label>
+    <input type="email" id="email" placeholder="Enter email" required />
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Enter password" required />
+
+    <label>Confirm Password</label>
+    <input type="password" id="confirm-password" placeholder="Confirm password" required />
+
+    <button type="submit">Sign Up</button>
+  </form>
+  <div class="link">
+    Already have an account? <a href="login.html">Login</a>
   </div>
+</div>
 
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  <script>
-    const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGAeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  
-    document.getElementById("signup-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-  
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirm-password").value;
-      const username = document.getElementById("username").value.trim();
-  
-      if (password !== confirmPassword) {
-        alert("Passwords do not match!");
-        return;
-      }
-  
-      // Check if username already exists
-      const { data: existingUsers, error: checkError } = await supabaseClient
-        .from("profiles")
-        .select("username")
-        .eq("username", username);
-  
-      if (checkError) {
-        alert("Error checking username: " + checkError.message);
-       return;
-      }
-  
-      if (existingUsers.length > 0) {
-        alert("Username already taken! Please choose a different one.");
-        return;
-      }
-  
-      // Create the auth account
-      const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
-        email,
-        password
-      });
-  
-      if (signUpError) {
-        alert("Error signing up: " + signUpError.message);
-        return;
-      }
-  
-      const userId = signUpData.user.id;
-  
-      // Insert into profiles with correct columns
-      const { error: profileError } = await supabaseClient
-        .from("profiles")
-        .insert([
-          {
-            id: userId,
-            username: username,
-            benzcoins: 100,  // default starting coins
-            balance: 500     // default starting money
-          }
-        ]);
+<script>
+  const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      if (profileError) {
-        alert("Error creating profile: " + profileError.message);
-        return;
+  document.getElementById("signup-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    // Check if username exists
+    const { data: existingUser, error: checkError } = await supabaseClient
+      .from("profiles")
+      .select("username")
+      .eq("username", username)
+      .maybeSingle();
+
+    if (checkError) {
+      alert("Error checking username: " + checkError.message);
+      return;
+    }
+
+    if (existingUser) {
+      alert("Username already taken!");
+      return;
+    }
+
+    // Sign up
+    const { data, error } = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: 'https://YOUR_GITHUB_USERNAME.github.io/YOUR_PROJECT/home.html',
+        data: { username }
       }
-  
-      alert("Sign-up successful! Please confirm your email.");
-      window.location.href = "login.html";
     });
-  </script>
+
+    if (error) {
+      alert("Error: " + error.message);
+    } else {
+      // Redirect to check-email page
+      window.location.href = "check-email.html?email=" + encodeURIComponent(email);
+    }
+  });
+</script>
+
 </body>
 </html>
-
-
-
