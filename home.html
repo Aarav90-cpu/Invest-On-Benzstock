@@ -423,7 +423,7 @@
     //  SUPABASE SETUP
     // ============================
     const SUPABASE_URL = "https://gsacnctvnpowrpeukkitij.supabase.co"; // intentional placeholder to avoid leaking
-    const SUPABASE_ANON_KEY = (localStorage.getItem('bs_anon_key')) || "REPLACE_WITH_YOUR_SUPABASE_ANON_KEY"; // <-- put your anon key
+    const SUPABASE_ANON_KEY = (localStorage.getItem('bs_anon_key')) || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA"; // <-- put your anon key
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Routes
