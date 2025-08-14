@@ -185,10 +185,11 @@
       alert("Error: " + error.message);
     } else {
       // Redirect to check-email page
-      window.location.href = "check-email.html?email=" + encodeURIComponent(email);
+      window.location.href = "check-email.html" + encodeURIComponent(email);
     }
   });
 </script>
 
 </body>
 </html>
+
