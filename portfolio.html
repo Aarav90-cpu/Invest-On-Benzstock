@@ -4,156 +4,205 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Portfolio & BenzStocks</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      background-color: #0d0d0d;
-      color: #fff;
       font-family: Arial, sans-serif;
+      background-color: #0d1117;
+      color: white;
       margin: 0;
       padding: 0;
     }
     header {
-      background-color: #1e1e1e;
-      padding: 15px 20px;
+      background: #161b22;
+      padding: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid #333;
     }
-    header h1 {
-      color: #00ff88;
+    h1 {
       margin: 0;
+      color: #58a6ff;
+    }
+    .username {
+      color: #8b949e;
+      font-size: 0.9rem;
+    }
+    .container {
+      padding: 1.5rem;
+    }
+    .stats {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .stat-box {
+      background: #161b22;
+      padding: 1rem;
+      border-radius: 6px;
+      flex: 1;
+      text-align: center;
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+    }
+    .stat-box h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #58a6ff;
+    }
+    .stocks-section {
+      background: #161b22;
+      padding: 1rem;
+      border-radius: 6px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+    }
+    .stock-item {
+      padding: 0.8rem;
+      border-bottom: 1px solid #30363d;
+    }
+    .stock-item:last-child {
+      border-bottom: none;
+    }
+    .no-stocks {
+      text-align: center;
+      padding: 1rem;
+      color: #8b949e;
     }
     .back-btn {
-      background: #00ff88;
-      border: none;
-      padding: 8px 15px;
+      color: #58a6ff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .search-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 0.5rem;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      color: white;
       border-radius: 4px;
+    }
+    .search-bar button {
+      padding: 0.5rem 1rem;
+      background: #238636;
+      border: none;
+      border-radius: 4px;
+      color: white;
       cursor: pointer;
-      color: #121212;
-      font-weight: bold;
     }
-    main {
-      padding: 20px;
-    }
-    .highlight {
-      color: #00ff88;
-      font-weight: bold;
-    }
-    .benzcoins-box {
-      background-color: #1e1e1e;
-      padding: 15px;
-      border-radius: 6px;
-      margin-top: 10px;
-      display: inline-block;
-      font-size: 1.2em;
-      border: 1px solid #333;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background-color: #1e1e1e;
-    }
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #333;
-    }
-    th {
-      color: #00ff88;
-    }
-    tr:hover {
-      background-color: #262626;
+    .search-bar button:hover {
+      background: #2ea043;
     }
   </style>
 </head>
 <body>
   <header>
+    <a class="back-btn" href="home.html">← Back</a>
     <h1>My Portfolio</h1>
-    <button class="back-btn" onclick="window.location.href='index.html'">⬅ Back</button>
+    <div class="username" id="username-display"></div>
   </header>
 
-  <main>
-    <h2>Welcome, <span id="username" class="highlight"></span>!</h2>
-
-    <!-- BenzsCoins Display -->
-    <div class="benzcoins-box">
-      💰 BenzsCoins: <span id="benzcoins" class="highlight">0</span>
+  <div class="container">
+    <div class="stats">
+      <div class="stat-box">
+        <h2 id="coins">0</h2>
+        <p>BenzsCoins</p>
+      </div>
+      <div class="stat-box">
+        <h2 id="money">$0</h2>
+        <p>My Money</p>
+      </div>
     </div>
 
-    <h3 style="margin-top: 30px;">My BenzStocks Overview</h3>
-    <table id="portfolio-table">
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>Quantity</th>
-          <th>Avg. Buy Price</th>
-          <th>Current Price</th>
-          <th>P/L</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Populated dynamically -->
-      </tbody>
-    </table>
-  </main>
+    <div class="stocks-section">
+      <div class="search-bar">
+        <input type="text" id="stock-search" placeholder="Search stocks..." />
+        <button id="search-btn">Search</button>
+      </div>
+      <div id="stocks-list">
+        <div class="no-stocks">Loading stocks...</div>
+      </div>
+    </div>
+  </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <script>
     const SUPABASE_URL = "https://gsacnctvnpowrpeukkij.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function checkAuth() {
+    const usernameDisplay = document.getElementById("username-display");
+    const coinsDisplay = document.getElementById("coins");
+    const moneyDisplay = document.getElementById("money");
+    const stocksList = document.getElementById("stocks-list");
+
+    async function loadProfileAndStocks() {
       const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) {
         window.location.href = "login.html";
         return;
       }
-      document.getElementById("username").textContent = user.email;
-      fetchBenzsCoins(user.id);
-    }
 
-    async function fetchBenzsCoins(userId) {
-      const { data, error } = await supabaseClient
-        .from("users")
-        .select("benzscoins")
-        .eq("id", userId)
+      // Get profile
+      const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("username, coins, money")
+        .eq("id", user.id)
         .single();
-      if (error) {
-        console.error(error);
-        return;
+
+      if (profile?.username) {
+        usernameDisplay.textContent = profile.username;
+      } else {
+        usernameDisplay.textContent = ""; // Hide if no username set
       }
-      document.getElementById("benzcoins").textContent = data.benzscoins ?? 0;
+
+      coinsDisplay.textContent = profile?.coins || 0;
+      moneyDisplay.textContent = `$${profile?.money || 0}`;
+
+      // Get stocks
+      const { data: stocks } = await supabaseClient
+        .from("stocks")
+        .select("*")
+        .eq("owner_id", user.id);
+
+      displayStocks(stocks);
     }
 
-    async function fetchPortfolio() {
-      const { data, error } = await supabaseClient.from("portfolio").select("*");
-      if (error) {
-        console.error(error);
+    function displayStocks(stocks) {
+      stocksList.innerHTML = "";
+      if (!stocks || stocks.length === 0) {
+        stocksList.innerHTML = `<div class="no-stocks">No stocks yet</div>`;
         return;
       }
-      const tbody = document.querySelector("#portfolio-table tbody");
-      tbody.innerHTML = "";
-      data.forEach(stock => {
-        const pl = (stock.current_price - stock.avg_buy_price) * stock.quantity;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${stock.symbol}</td>
-          <td>${stock.quantity}</td>
-          <td>$${stock.avg_buy_price.toFixed(2)}</td>
-          <td>$${stock.current_price.toFixed(2)}</td>
-          <td style="color: ${pl >= 0 ? '#00ff88' : '#ff4444'};">
-            ${pl >= 0 ? '+' : ''}${pl.toFixed(2)}
-          </td>
-        `;
-        tbody.appendChild(tr);
+
+      stocks.forEach(stock => {
+        const div = document.createElement("div");
+        div.classList.add("stock-item");
+        div.textContent = `${stock.symbol} - ${stock.quantity} shares`;
+        stocksList.appendChild(div);
       });
     }
 
-    checkAuth();
-    fetchPortfolio();
+    document.getElementById("search-btn").addEventListener("click", async () => {
+      const searchTerm = document.getElementById("stock-search").value.trim();
+      if (!searchTerm) {
+        loadProfileAndStocks();
+        return;
+      }
+
+      const { data: stocks } = await supabaseClient
+        .from("stocks")
+        .select("*")
+        .ilike("symbol", `%${searchTerm}%`);
+
+      displayStocks(stocks);
+    });
+
+    loadProfileAndStocks();
   </script>
 </body>
 </html>
+
