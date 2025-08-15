@@ -426,42 +426,6 @@
     const SUPABASE_ANON_KEY = (localStorage.getItem('bs_anon_key')) || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWNuY3R2bnBvd3JwZXVra2lqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MDYwMzcsImV4cCI6MjA3MDM4MjAzN30.mEzg4xvlmgpkQC8XYdKRETe70vMRzHhgaERJSLL5wGA"; // <-- put your anon key
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Routes
-    const LOGIN_PAGE = 'login.html';
-
-    // ============================
-    //  AUTH GUARD + PROFILE FETCH
-    // ============================
-    async function guard(){
-      const { data, error } = await sb.auth.getUser();
-      if(error){ console.warn('auth error', error.message); }
-      if(!data || !data.user){
-        // not logged in, bounce to login
-        location.href = LOGIN_PAGE; return;
-      }
-
-      // fetch profile row (profiles table may or may not exist)
-      try{
-        const { data:profile, error: pErr } = await sb.from('profiles').select('username, full_name, avatar_url, benzscoins, balance').eq('id', data.user.id).single();
-        if(!pErr && profile){
-          // If username/full_name is present, show it; otherwise intentionally show nothing
-          const display = profile.username || profile.full_name || '';
-          // put the name into the UI if present
-          if(display){
-            // insert display into a subtle place (we intentionally avoid showing emails)
-            const el = document.createElement('div'); el.className='small-muted'; el.style.marginRight='8px'; el.textContent = display;
-            const right = document.querySelector('.right-controls');
-            right.insertBefore(el, right.firstChild);
-          }
-        } else {
-          // no profile row or error — we keep header empty by design (user must set name in Settings)
-          console.info('No profile row found or error fetching profile:', pErr && pErr.message);
-        }
-      }catch(e){ console.warn('profile fetch failed', e); }
-    }
-
-    // call guard on load
-    guard();
 
     // ============================
     //  MOCK DATA + FETCH (with empty-check)
